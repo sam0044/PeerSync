@@ -86,7 +86,7 @@ export default function Home() {
             <CardHeader className="p-4 pb-2">
               <CardTitle className="flex justify-between items-center text-base font-medium">
                 <span>{file.name}</span>
-                <span className="text-primary/80">{file.type}</span>
+                <span className="text-primary">{file.type}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
