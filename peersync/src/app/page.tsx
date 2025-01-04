@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Header } from "@/components/layout/header";
-import { Hero } from "@/components/sections/hero";
-import { Features } from "@/components/sections/features";
-import { UploadZone } from "@/components/file-upload/upload-zone";
-import { FileCard } from "@/components/file-upload/file-card";
+import { HomeContent } from "@/components/sections/home-content";
 import { DragOverlay } from "@/components/file-upload/drag-overlay";
 
 export default function Home() {
@@ -31,17 +28,12 @@ export default function Home() {
     >
       <input {...getInputProps()} />
       <Header />
-
-      <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
-        <Hero />
-        
-        <section className="max-w-2xl mx-auto mb-16">
-          <UploadZone onFileSelect={setFile} isDragActive={isDragActive} />
-          {file && <FileCard file={file} />}
-        </section>
-
-        <Features />
-      </main>
+      
+      <HomeContent 
+        file={file}
+        onFileSelect={setFile}
+        isDragActive={isDragActive}
+      />
 
       <DragOverlay isVisible={isDragActive} />
     </div>
