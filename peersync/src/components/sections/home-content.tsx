@@ -29,7 +29,7 @@ export const HomeContent: FC<HomeContentProps> = ({
 
   return (
     <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
-      <Hero />
+      <Hero mode="share" />
       
       <section className="max-w-2xl mx-auto mb-16">
         {file && isSharing && sessionId && (
