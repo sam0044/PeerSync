@@ -1,15 +1,16 @@
 import QRCode from "react-qr-code";
 import { CopyButton } from "../ui/copy-button";
-
+import { Button } from "../ui/button";
 
 interface ShareInfoProps {
   sessionId: string;
+  onTerminate: () => void;
 }
 
-export function ShareInfo({ sessionId }: ShareInfoProps) {
+export function ShareInfo({ sessionId, onTerminate }: ShareInfoProps) {
   const shareUrl = `${window.location.origin}/receive/${sessionId}`;
   return (
-    <div className="text-center mb-8">
+    <div className="text-center mb-4">
       <QRCode 
         value={shareUrl}
         size={160}
@@ -20,6 +21,13 @@ export function ShareInfo({ sessionId }: ShareInfoProps) {
         <p className="text-sm text-muted-foreground break-all">{shareUrl}</p>
         <CopyButton value={shareUrl} className="shrink-0" />
       </div>
+      <Button 
+        variant="link" 
+        className="text-sm hover:text-foreground"
+        onClick={onTerminate}
+      >
+        Terminate
+      </Button>
     </div>
   );
 }

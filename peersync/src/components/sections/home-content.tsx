@@ -30,7 +30,7 @@ export const HomeContent: FC<HomeContentProps> = ({
         <Hero />
         
         <section className="max-w-2xl mx-auto mb-16">
-          {file && isSharing && sessionId && <ShareInfo sessionId={sessionId} />}
+          {file && isSharing && sessionId && <ShareInfo sessionId={sessionId} onTerminate={() => {setFile(null); setSessionId(null);setIsSharing(false);}} />}
           {!isSharing && <UploadZone onFileSelect={onFileSelect} isDragActive={isDragActive} />}
           {file && (
             <div className="space-y-4">
