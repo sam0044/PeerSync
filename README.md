@@ -1,2 +1,2 @@
 # PeerSync
-Our Hackathon project for Hacks for Hackers
+Project to explore WebRTC and peer to peer file transfer
