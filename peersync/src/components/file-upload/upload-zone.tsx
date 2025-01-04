@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload } from "lucide-react";
-import { useDropzone } from "react-dropzone";
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
@@ -22,7 +21,7 @@ export function UploadZone({ onFileSelect, isDragActive }: UploadZoneProps) {
       <CardHeader className="text-center">
         <CardTitle className="flex flex-col items-center gap-4">
           <Upload className="h-10 w-10 text-muted-foreground" />
-          <span>Drop your file here</span>
+          <span>Drop your file anywhere</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center pb-6">

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface FileCardProps {
@@ -6,23 +5,27 @@ interface FileCardProps {
 }
 
 export function FileCard({ file }: FileCardProps) {
+  const formatFileSize = (bytes: number) => {
+    const mb = bytes / (1024 * 1024);
+    const kb = bytes / 1024;
+    
+    if (mb >= 1) {
+      return `${mb.toFixed(2)} MB`;
+    }
+    return `${kb.toFixed(2)} KB`;
+  };
   return (
     <Card className="mt-4 border-primary">
-      <CardHeader className="p-4 pb-2">
+      <CardHeader className="p-3 pb-2">
         <CardTitle className="flex justify-between items-center text-base font-medium">
           <span className="truncate">{file.name}</span>
           <span className="text-primary text-sm">{file.type}</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            Size: {(file.size / 1024).toFixed(2)} KB
-          </p>
-          <Button variant="secondary" size="sm">
-            Share Now
-          </Button>
-        </div>
+      <CardContent className="p-3 pt-0">
+        <p className="text-sm text-muted-foreground">
+          Size: {formatFileSize(file.size)}
+        </p>
       </CardContent>
     </Card>
   );
