@@ -5,6 +5,15 @@ interface FileCardProps {
 }
 
 export function FileCard({ file }: FileCardProps) {
+  const formatFileSize = (bytes: number) => {
+    const mb = bytes / (1024 * 1024);
+    const kb = bytes / 1024;
+    
+    if (mb >= 1) {
+      return `${mb.toFixed(2)} MB`;
+    }
+    return `${kb.toFixed(2)} KB`;
+  };
   return (
     <Card className="mt-4 border-primary">
       <CardHeader className="p-3 pb-2">
@@ -15,7 +24,7 @@ export function FileCard({ file }: FileCardProps) {
       </CardHeader>
       <CardContent className="p-3 pt-0">
         <p className="text-sm text-muted-foreground">
-          Size: {(file.size / 1024).toFixed(2)} KB
+          Size: {formatFileSize(file.size)}
         </p>
       </CardContent>
     </Card>
