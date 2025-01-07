@@ -13,7 +13,6 @@ import { Progress } from "../ui/progress";
 interface HomeContentProps {
   file: File | null;
   onFileSelect: (file: File) => void;
-  isDragActive: boolean;
   sessionId: string | null;
   setFile: (file: File | null) => void;
   setSessionId: (sessionId: string | null) => void;
@@ -22,7 +21,6 @@ interface HomeContentProps {
 export function HomeContent ({
   file,
   onFileSelect,
-  isDragActive,
   sessionId,
   setFile,
   setSessionId,
@@ -66,7 +64,7 @@ export function HomeContent ({
             progress={progress}
           />
         )}
-        {!isSharing && <UploadZone onFileSelect={onFileSelect} isDragActive={isDragActive} />}
+        {!isSharing && <UploadZone onFileSelect={onFileSelect} />}
         {file && (
           <div className="space-y-4">
             <FileCard file={file} />
