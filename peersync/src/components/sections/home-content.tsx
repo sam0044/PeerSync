@@ -1,12 +1,13 @@
 "use client";
 
-import { type FC } from "react";
 import { Hero } from "./hero";
 import { UploadZone } from "../file-upload/upload-zone";
 import { FileCard } from "../file-upload/file-card";
 import { ShareInfo } from "../file-share/share-info";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { usePeerConnection } from "@/hooks/usePeerConnection";
+import { nanoid } from "nanoid";
 
 interface HomeContentProps {
   file: File | null;
@@ -17,15 +18,39 @@ interface HomeContentProps {
   setSessionId: (sessionId: string | null) => void;
 }
 
-export const HomeContent: FC<HomeContentProps> = ({
+export function HomeContent ({
   file,
   onFileSelect,
   isDragActive,
   sessionId,
   setFile,
   setSessionId,
-}) => {
+}: HomeContentProps) {
   const [isSharing, setIsSharing] = useState(false);
+  const { isConnected, sendFile, disconnect } = usePeerConnection({
+    sessionId: sessionId,
+    mode: 'sender'
+  });
+
+  const handleShare = () => {
+    setIsSharing(true);
+    setSessionId(nanoid(21));
+  };
+
+  const handleTerminate = () => {
+    disconnect();
+    setFile(null);
+    setSessionId(null);
+    setIsSharing(false);
+  };
+
+  // Send file when peer connects
+  useEffect(() => {
+    if (isConnected && file && isSharing) {
+      sendFile(file);
+      console.log(file);
+    }
+  }, [isConnected, file, isSharing, sendFile]);
 
   return (
     <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
@@ -35,11 +60,8 @@ export const HomeContent: FC<HomeContentProps> = ({
         {file && isSharing && sessionId && (
           <ShareInfo 
             sessionId={sessionId} 
-            onTerminate={() => {
-              setFile(null);
-              setSessionId(null);
-              setIsSharing(false);
-            }} 
+            onTerminate={handleTerminate}
+            isConnected={isConnected}
           />
         )}
         {!isSharing && <UploadZone onFileSelect={onFileSelect} isDragActive={isDragActive} />}
@@ -48,7 +70,7 @@ export const HomeContent: FC<HomeContentProps> = ({
             <FileCard file={file} />
             {!isSharing && (
               <div className="text-center flex justify-center gap-4">
-                <Button variant="secondary" size="lg" onClick={() => setIsSharing(true)}>
+                <Button variant="secondary" size="lg" onClick={handleShare}>
                   Share Now
                 </Button>
                 <Button size="lg" onClick={() => {
@@ -64,4 +86,4 @@ export const HomeContent: FC<HomeContentProps> = ({
       </section>
     </main>
   );
-};   
+};  

@@ -5,9 +5,10 @@ import { Button } from "../ui/button";
 interface ShareInfoProps {
   sessionId: string;
   onTerminate: () => void;
+  isConnected: boolean;
 }
 
-export function ShareInfo({ sessionId, onTerminate }: ShareInfoProps) {
+export function ShareInfo({ sessionId, onTerminate, isConnected }: ShareInfoProps) {
   const shareUrl = `${window.location.origin}/receive/${sessionId}`;
   return (
     <div className="text-center mb-4">
@@ -21,6 +22,9 @@ export function ShareInfo({ sessionId, onTerminate }: ShareInfoProps) {
         <p className="text-sm text-muted-foreground break-all">{shareUrl}</p>
         <CopyButton value={shareUrl} className="shrink-0" />
       </div>
+      <p className="text-sm mt-2">
+        Status: {isConnected ? 'Connected to peer' : 'Waiting for peer...'}
+      </p>
       <Button 
         variant="link" 
         className="text-sm hover:text-foreground"
