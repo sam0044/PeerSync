@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { usePeerConnection } from "@/hooks/usePeerConnection";
 import { nanoid } from "nanoid";
+import { Progress } from "../ui/progress";
 
 interface HomeContentProps {
   file: File | null;
@@ -27,7 +28,7 @@ export function HomeContent ({
   setSessionId,
 }: HomeContentProps) {
   const [isSharing, setIsSharing] = useState(false);
-  const { isConnected, sendFile, disconnect } = usePeerConnection({
+  const { isConnected, sendFile, disconnect, progress } = usePeerConnection({
     sessionId: sessionId,
     mode: 'sender'
   });
@@ -62,6 +63,7 @@ export function HomeContent ({
             sessionId={sessionId} 
             onTerminate={handleTerminate}
             isConnected={isConnected}
+            progress={progress}
           />
         )}
         {!isSharing && <UploadZone onFileSelect={onFileSelect} isDragActive={isDragActive} />}
@@ -80,6 +82,9 @@ export function HomeContent ({
                   Cancel
                 </Button>
               </div>
+            )}
+            {isSharing && isConnected && progress > 0 && progress < 1 && (
+              <Progress value={progress*100} />
             )}
           </div>
         )}

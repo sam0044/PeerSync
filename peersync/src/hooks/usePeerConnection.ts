@@ -14,6 +14,7 @@ export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps){
   const [isConnected, setIsConnected] = useState(false);
   const [receivedFileData, setReceivedFileData] = useState(false);
   const [spw, setSpw] = useState<SimplePeerWrapper | null>(null);
+  const [progress, setProgress] = useState(0);
   const receivedChunks = useRef<Array<ArrayBuffer>>([]);
   const CHUNK_SIZE = 16 * 1024;
   
@@ -82,9 +83,8 @@ export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps){
             console.log('Sending chunk of size:', reader.result.byteLength);
             console.log(reader.result)
             spw.send(base64String);
-    
             offset += slice.size;
-    
+            setProgress(offset/file.size)
             if (offset < file.size) {
               // Continue with the next chunk
               sendChunk();
@@ -123,7 +123,8 @@ export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps){
     isConnected,
     sendFile,
     disconnect,
-    receivedFileData
+    receivedFileData,
+    progress
   }
 
 }
