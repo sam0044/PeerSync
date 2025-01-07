@@ -37,7 +37,6 @@ export default function Home() {
       <HomeContent 
         file={file}
         onFileSelect={handleFileSelect}
-        isDragActive={isDragActive}
         sessionId={sessionId}
         setFile={setFile}
         setSessionId={setSessionId}

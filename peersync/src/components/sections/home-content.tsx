@@ -64,9 +64,13 @@ export function HomeContent ({
             progress={progress}
           />
         )}
-        {!isSharing && <UploadZone onFileSelect={onFileSelect} />}
+        {!isSharing && (
+          <div className="mb-8">
+            <UploadZone onFileSelect={onFileSelect} />
+          </div>
+         )}
         {file && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <FileCard file={file} />
             {!isSharing && (
               <div className="text-center flex justify-center gap-4">

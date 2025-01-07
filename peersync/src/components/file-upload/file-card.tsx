@@ -15,7 +15,7 @@ export function FileCard({ file }: FileCardProps) {
     return `${kb.toFixed(2)} KB`;
   };
   return (
-    <Card className="mt-4 border-primary">
+    <Card className="mt-4 border-muted-foreground/20">
       <CardHeader className="p-3 pb-2">
         <CardTitle className="flex justify-between items-center text-base font-medium">
           <span className="truncate">{file.name}</span>
