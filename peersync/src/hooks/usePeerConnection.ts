@@ -58,11 +58,21 @@ export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps){
       });
     }
     return () => {
-      spw.close();
-      setSpw(null);
-      setIsConnected(false);
-      setReceivedFileData(false);
-      receivedChunks.current = [];
+      console.log('Cleaning up connection for room:', sessionId);
+    if (spw) {
+      try {
+        // First set states to ensure UI updates
+        setIsConnected(false);
+        setReceivedFileData(false);
+        receivedChunks.current = [];
+        
+        // Then close the connection
+        spw.close();
+        setSpw(null);
+      } catch (error) {
+        console.error('Error during cleanup:', error);
+      }
+      }
     }
   },[sessionId,mode])
   
