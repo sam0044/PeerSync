@@ -15,7 +15,6 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "simple-peer-server": "^0.0.11",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
