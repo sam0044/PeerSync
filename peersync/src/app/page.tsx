@@ -5,7 +5,6 @@ import { useDropzone } from "react-dropzone";
 import { Header } from "@/components/layout/header";
 import { HomeContent } from "@/components/sections/home-content";
 import { DragOverlay } from "@/components/file-upload/drag-overlay";
-import { nanoid } from "nanoid";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null);
@@ -13,7 +12,6 @@ export default function Home() {
 
   const handleFileSelect = (newFile: File) => {
     setFile(newFile);
-    setSessionId(nanoid(21));
   };
 
   const onDrop = (acceptedFiles: File[]) => {
@@ -39,7 +37,6 @@ export default function Home() {
       <HomeContent 
         file={file}
         onFileSelect={handleFileSelect}
-        isDragActive={isDragActive}
         sessionId={sessionId}
         setFile={setFile}
         setSessionId={setSessionId}

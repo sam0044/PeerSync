@@ -1,31 +1,72 @@
 "use client";
 
-import { type FC } from "react";
 import { Hero } from "./hero";
 import { UploadZone } from "../file-upload/upload-zone";
 import { FileCard } from "../file-upload/file-card";
 import { ShareInfo } from "../file-share/share-info";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { usePeerConnection } from "@/hooks/usePeerConnection";
+import { Progress } from "../ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 interface HomeContentProps {
   file: File | null;
   onFileSelect: (file: File) => void;
-  isDragActive: boolean;
   sessionId: string | null;
   setFile: (file: File | null) => void;
   setSessionId: (sessionId: string | null) => void;
 }
 
-export const HomeContent: FC<HomeContentProps> = ({
+export function HomeContent ({
   file,
   onFileSelect,
-  isDragActive,
   sessionId,
   setFile,
   setSessionId,
-}) => {
+}: HomeContentProps) {
   const [isSharing, setIsSharing] = useState(false);
+  const { isConnected, sendFile, disconnect, progress } = usePeerConnection({
+    sessionId: sessionId,
+    mode: 'sender'
+  });
+  const { toast } = useToast();
+  const handleShare = async () => {
+    try{
+      const response = await fetch('/api/sessions/create', {
+        method: 'POST',
+      });
+      if(!response.ok){
+        throw new Error('Failed to create session');
+      }
+      const {sessionId} = await response.json();
+      setIsSharing(true);
+      setSessionId(sessionId);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error creating session",
+        description: "Could not create sharing session. Please try again.",
+      });
+      setIsSharing(false);
+    }
+
+  };
+
+  const handleTerminate = () => {
+    disconnect();
+    setFile(null);
+    setSessionId(null);
+    setIsSharing(false);
+  };
+
+  // Send file when peer connects
+  useEffect(() => {
+    if (isConnected && file && isSharing) {
+      sendFile(file);
+      console.log(file);
+    }
+  }, [isConnected, file, isSharing, sendFile]);
 
   return (
     <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
@@ -35,20 +76,22 @@ export const HomeContent: FC<HomeContentProps> = ({
         {file && isSharing && sessionId && (
           <ShareInfo 
             sessionId={sessionId} 
-            onTerminate={() => {
-              setFile(null);
-              setSessionId(null);
-              setIsSharing(false);
-            }} 
+            onTerminate={handleTerminate}
+            isConnected={isConnected}
+            progress={progress}
           />
         )}
-        {!isSharing && <UploadZone onFileSelect={onFileSelect} isDragActive={isDragActive} />}
+        {!isSharing && (
+          <div className="mb-8">
+            <UploadZone onFileSelect={onFileSelect} />
+          </div>
+         )}
         {file && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <FileCard file={file} />
             {!isSharing && (
               <div className="text-center flex justify-center gap-4">
-                <Button variant="secondary" size="lg" onClick={() => setIsSharing(true)}>
+                <Button variant="secondary" size="lg" onClick={handleShare}>
                   Share Now
                 </Button>
                 <Button size="lg" onClick={() => {
@@ -59,9 +102,12 @@ export const HomeContent: FC<HomeContentProps> = ({
                 </Button>
               </div>
             )}
+            {isSharing && isConnected && progress > 0 && progress < 1 && (
+              <Progress value={progress*100} />
+            )}
           </div>
         )}
       </section>
     </main>
   );
-};   
+};  
