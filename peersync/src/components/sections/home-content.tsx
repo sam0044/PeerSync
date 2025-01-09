@@ -7,8 +7,8 @@ import { ShareInfo } from "../file-share/share-info";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { usePeerConnection } from "@/hooks/usePeerConnection";
-import { nanoid } from "nanoid";
 import { Progress } from "../ui/progress";
+import { useToast } from "@/hooks/use-toast";
 
 interface HomeContentProps {
   file: File | null;
@@ -30,10 +30,27 @@ export function HomeContent ({
     sessionId: sessionId,
     mode: 'sender'
   });
+  const { toast } = useToast();
+  const handleShare = async () => {
+    try{
+      const response = await fetch('/api/sessions/create', {
+        method: 'POST',
+      });
+      if(!response.ok){
+        throw new Error('Failed to create session');
+      }
+      const {sessionId} = await response.json();
+      setIsSharing(true);
+      setSessionId(sessionId);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Error creating session",
+        description: "Could not create sharing session. Please try again.",
+      });
+      setIsSharing(false);
+    }
 
-  const handleShare = () => {
-    setIsSharing(true);
-    setSessionId(nanoid(21));
   };
 
   const handleTerminate = () => {

@@ -2,7 +2,6 @@
 
 import { Header } from "@/components/layout/header";
 import { Hero } from "@/components/sections/hero";
-import { Button } from "@/components/ui/button";
 import { usePeerConnection } from "@/hooks/usePeerConnection";
 import { useParams } from "next/navigation";
 
@@ -10,7 +9,7 @@ export default function ReceivePage() {
   const params = useParams();
   const sessionId = params.sessionId as string;
   
-  const { isConnected, disconnect, receivedFileData} = usePeerConnection({
+  const { isConnected, receivedFileData} = usePeerConnection({
     sessionId,
     mode: 'receiver'
   });
@@ -24,13 +23,6 @@ export default function ReceivePage() {
         <div className="flex flex-col items-center gap-4">
           {!isConnected && <p>Connecting to peer...</p>}
           {isConnected && !receivedFileData && <p>Waiting for file...</p>}
-          {receivedFileData && (
-            <>
-              <Button onClick={disconnect}>
-                Download
-              </Button>
-            </>
-          )}
         </div>
       </main>
     </div>

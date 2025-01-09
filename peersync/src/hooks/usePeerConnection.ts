@@ -1,140 +1,189 @@
-import { useState,useEffect, useCallback, useRef } from "react";
-import SimplePeerWrapper from "simple-peer-wrapper";
+import { useState, useEffect, useCallback, useRef } from "react";
+import SimplePeer, { SignalData as SimplePeerSignalData } from 'simple-peer';
+import { io, Socket } from 'socket.io-client';
 import download from 'downloadjs';
-
-
 
 interface UsePeerConnectionProps {
   sessionId: string | null;
   mode: 'sender' | 'receiver';
 }
+interface SignalData {
+  targetId: string;
+  signal: SimplePeerSignalData;
+}
 
+interface PeerSignalData {
+  peerId: string;
+  signal: SimplePeerSignalData;
+}
 
-export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps){
+export function usePeerConnection({ sessionId, mode }: UsePeerConnectionProps) {
   const [isConnected, setIsConnected] = useState(false);
   const [receivedFileData, setReceivedFileData] = useState(false);
-  const [spw, setSpw] = useState<SimplePeerWrapper | null>(null);
   const [progress, setProgress] = useState(0);
+  const socketRef = useRef<Socket | null>(null);
+  const peerRef = useRef<SimplePeer.Instance | null>(null);
   const receivedChunks = useRef<Array<ArrayBuffer>>([]);
   const CHUNK_SIZE = 16 * 1024;
-  
-  useEffect(()=>{
-    if(!sessionId) return;
-    const spw = new SimplePeerWrapper({ serverUrl: 'http://localhost:8081', roomId: sessionId, debug: true });
-    setSpw(spw);
-    spw.connect();
-    spw.on('connect',()=> {
-      setIsConnected(true);
-    })
-    if (mode === 'receiver') {
-      spw.on('data', (rawdata) => {
-        const data = rawdata.data;
-        
-        // Try to parse as JSON first
-        try {
-          const parsed = JSON.parse(data);
-          if (parsed.done) {
-            console.log('File transfer complete, chunks:', receivedChunks.current.length);
-            const blob = new Blob(receivedChunks.current, { type: parsed.type });
-            download(blob, parsed.name);
-            setReceivedFileData(true);
-            receivedChunks.current = [];
-          }
-        } catch (error) {
-          // If it's not valid JSON, treat it as a base64 chunk
-          try {
-            console.log('error',error)
-            const binaryString = atob(data);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-              bytes[i] = binaryString.charCodeAt(i);
-            }
-            console.log('Received chunk of size:', bytes.buffer.byteLength);
-            receivedChunks.current.push(bytes.buffer);
-          } catch (decodeError) {
-            console.error('Error decoding chunk:', decodeError);
-          }
-        }
-      });
-    }
+
+  useEffect(() => {
+    if (!sessionId) return;
+
+    // Initialize socket connection
+    const socket = io('http://localhost:8081');
+    socketRef.current = socket;
+
+    socket.on('connect', () => {
+      console.log('Socket connected');
+      socket.emit('join-room', sessionId);
+    });
+
+    // Handle peer joining (sender creates the peer)
+    socket.on('peer-joined', (peerId) => {
+      console.log('Peer joined:', peerId);
+      if (mode === 'sender') {
+        const peer = new SimplePeer({ initiator: true });
+        peerRef.current = peer;
+        setupPeerEvents(peer, socket, peerId);
+      }
+    });
+
+    // Handle existing peers (receiver joins existing room)
+    socket.on('existing-peers', (peers) => {
+      if (mode === 'receiver' && peers.length > 0) {
+        const peer = new SimplePeer({ initiator: false });
+        peerRef.current = peer;
+        setupPeerEvents(peer, socket, peers[0]);
+      }
+    });
+
+    // Handle WebRTC signaling
+    socket.on('signal', ({ peerId, signal }: PeerSignalData) => {
+      console.log('Received signal from:', peerId);
+      if (!peerRef.current) {
+        const peer = new SimplePeer({ initiator: false });
+        peerRef.current = peer;
+        setupPeerEvents(peer, socket, peerId);
+      }
+      peerRef.current.signal(signal);
+    });
+
     return () => {
-      console.log('Cleaning up connection for room:', sessionId);
-    if (spw) {
-      try {
-        // First set states to ensure UI updates
-        setIsConnected(false);
-        setReceivedFileData(false);
-        receivedChunks.current = [];
-        
-        // Then close the connection
-        spw.close();
-        setSpw(null);
-      } catch (error) {
-        console.error('Error during cleanup:', error);
+      console.log('Cleaning up connection');
+      if (peerRef.current) {
+        peerRef.current.destroy();
+        peerRef.current = null;
       }
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
       }
-    }
-  },[sessionId,mode])
-  
+      setIsConnected(false);
+      setReceivedFileData(false);
+      receivedChunks.current = [];
+    };
+  }, [sessionId, mode]);
+
+  const setupPeerEvents = (peer: SimplePeer.Instance, socket: Socket, targetId: string) => {
+    peer.on('signal', (signal) => {
+      console.log('Sending signal to:', targetId);
+      socket.emit('signal', { targetId, signal } as SignalData);
+    });
+
+    peer.on('connect', () => {
+      console.log('Peer connection established');
+      setIsConnected(true);
+    });
+
+    peer.on('data', (data) => {
+      if (mode === 'receiver') {
+        // Handle string data (metadata)
+          console.log('Received metadata');
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.done) {
+              console.log('File transfer complete, chunks:', receivedChunks.current.length);
+              const blob = new Blob(receivedChunks.current, { type: parsed.type });
+              download(blob, parsed.name);
+              setReceivedFileData(true);
+              receivedChunks.current = [];
+            }
+          } catch (error) {
+            // If it's not valid JSON, treat it as a base64 chunk
+            console.log('error',error)
+            if (data instanceof Uint8Array) {
+              receivedChunks.current.push(data.buffer);
+            } else if (data instanceof ArrayBuffer) {
+              receivedChunks.current.push(data);
+            } else {
+              // If it's neither JSON nor binary, log error
+              console.error('Unknown data format:', typeof data);
+            }
+          }
+      }
+    });
+
+    peer.on('close', () => {
+      console.log('Peer connection closed');
+      setIsConnected(false);
+    });
+
+    peer.on('error', (err) => {
+      console.error('Peer error:', err);
+    });
+  };
 
   const sendFile = useCallback((file: File) => {
-    if(mode === 'sender' && spw && isConnected){
+    if (mode === 'sender' && peerRef.current && isConnected) {
       let offset = 0;
       const sendChunk = () => {
         const slice = file.slice(offset, offset + CHUNK_SIZE);
         const reader = new FileReader();
-    
-        // When the file slice is read
+
         reader.onload = () => {
           if (reader.result instanceof ArrayBuffer) {
-            // Send the data to the peer
             const uint8Array = new Uint8Array(reader.result);
-            const base64String = btoa(String.fromCharCode.apply(null, Array.from(uint8Array)));
-            console.log('Sending chunk of size:', reader.result.byteLength);
-            console.log(reader.result)
-            spw.send(base64String);
+            peerRef.current?.send(uint8Array);
             offset += slice.size;
-            setProgress(offset/file.size)
+            setProgress(offset / file.size);
+
             if (offset < file.size) {
-              // Continue with the next chunk
               sendChunk();
             } else {
-              // Notify the peer that the file transfer is complete
-              spw.send(
-                JSON.stringify({
-                  done: true,
-                  name: file.name,
-                  type: file.type,
-                })
-              );
+              peerRef.current?.send(JSON.stringify({
+                done: true,
+                name: file.name,
+                type: file.type,
+              }));
+              console.log('Sent metadata');
             }
           }
-          else{
-            console.error('Reader result is not an ArrayBuffer:', reader.result);
-          }
         };
-    
-        // Start reading the slice as an ArrayBuffer
+
         reader.readAsArrayBuffer(slice);
       };
-    
-      // Start the process
+
       sendChunk();
     }
-  },[mode,spw, isConnected, CHUNK_SIZE])
-
+  }, [mode, isConnected, CHUNK_SIZE]);
 
   const disconnect = useCallback(() => {
-    if(spw){
-      spw.close();
+    if (peerRef.current) {
+      peerRef.current.destroy();
+      peerRef.current = null;
     }
-  },[spw])
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+    setIsConnected(false);
+  }, []);
+
   return {
     isConnected,
     sendFile,
     disconnect,
     receivedFileData,
     progress
-  }
-
+  };
 }
