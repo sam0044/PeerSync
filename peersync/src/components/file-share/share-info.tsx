@@ -1,7 +1,7 @@
 import QRCode from "react-qr-code";
 import { CopyButton } from "../ui/copy-button";
 import { Button } from "../ui/button";
-
+import { Progress } from "../ui/progress";
 interface ShareInfoProps {
   sessionId: string;
   onTerminate: () => void;
@@ -32,13 +32,32 @@ export function ShareInfo({ sessionId, onTerminate, isConnected, progress }: Sha
       <p className="text-sm mt-2">
         Status: {getStatusMessage()}
       </p>
-      <Button 
-        variant="link" 
-        className="text-sm hover:text-foreground"
-        onClick={onTerminate}
-      >
-        Terminate
-      </Button>
+      {progress > 0 && (
+        <div className="mt-4 space-y-2">
+        <Progress value={progress * 100} />
+        <p className="text-sm text-muted-foreground">
+          {Math.round(progress * 100)}%
+        </p>
+      </div>
+      )}
+      {progress === 1 ? (
+        <Button 
+          size="sm"
+          variant="default" 
+          className="mt-4"
+          onClick={onTerminate}
+        >
+          Share Another File
+        </Button>
+      ) : (
+        <Button 
+          variant="link" 
+          className="text-sm hover:text-foreground mt-4"
+          onClick={onTerminate}
+        >
+          Terminate
+        </Button>
+      )}
     </div>
   );
 }
