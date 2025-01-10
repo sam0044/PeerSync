@@ -3,7 +3,7 @@ import { getSession,deleteSession } from "@/lib/session";
 
 export async function GET(request: Request, { params }: { params: { sessionId: string } }) {
     try{
-        const sessionId = params.sessionId;
+        const {sessionId} = await params;
         const session = await getSession(sessionId);
         if (!session) {
             return NextResponse.json({ 
