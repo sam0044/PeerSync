@@ -13,13 +13,13 @@ export async function middleware(request: NextRequest){
         if(data.valid){
             return NextResponse.next();
         }
-        const redirectUrl = new URL('/', request.url);
-        redirectUrl.searchParams.set('error', data.message === 'Session expired' ? 'expired-session' : 'invalid-session');
+        const redirectUrl = new URL('/error', request.url);
+        redirectUrl.searchParams.set('type', data.message === 'Session expired' ? 'expired-session' : 'invalid-session');
         return NextResponse.redirect(redirectUrl);
 
     } catch {
-        const redirectUrl = new URL('/', request.url);
-        redirectUrl.searchParams.set('error', 'invalid-session');
+        const redirectUrl = new URL('/error', request.url);
+        redirectUrl.searchParams.set('type', 'invalid-session');
         return NextResponse.redirect(redirectUrl);
     }
 }
