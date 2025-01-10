@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/layout/header";
-import { Hero } from "@/components/sections/hero";
+import { Hero } from "@/components/layout/hero";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { usePeerConnection } from "@/hooks/usePeerConnection";

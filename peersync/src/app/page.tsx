@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Header } from "@/components/layout/header";
-import { HomeContent } from "@/components/sections/home-content";
+import { HomeContent } from "@/components/layout/home-content";
 import { DragOverlay } from "@/components/file-upload/drag-overlay";
 
 export default function Home() {
