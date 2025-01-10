@@ -2,6 +2,7 @@ import QRCode from "react-qr-code";
 import { CopyButton } from "../ui/copy-button";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
+
 interface ShareInfoProps {
   sessionId: string;
   onTerminate: () => void;
@@ -15,8 +16,9 @@ export function ShareInfo({ sessionId, onTerminate, isConnected, progress }: Sha
     if (!isConnected) return 'Waiting for peer...';
     if (progress === 0) return 'Connected - Ready to transfer';
     if (progress === 1) return 'Transfer complete!';
-    return `Transferring: ${Math.round(progress * 100)}%`;
+    return `Transferring...`;
   };
+
   return (
     <div className="text-center mb-4">
       <QRCode 
@@ -32,32 +34,25 @@ export function ShareInfo({ sessionId, onTerminate, isConnected, progress }: Sha
       <p className="text-sm mt-2">
         Status: {getStatusMessage()}
       </p>
-      {progress > 0 && (
-        <div className="mt-4 space-y-2">
-        <Progress value={progress * 100} />
-        <p className="text-sm text-muted-foreground">
-          {Math.round(progress * 100)}%
-        </p>
-      </div>
-      )}
-      {progress === 1 ? (
+      
+      {/* Progress section */}
+      <div className="mt-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Progress value={progress * 100} className="flex-1" />
+          <span className="text-sm text-muted-foreground w-12">
+            {Math.round(progress * 100)}%
+          </span>
+        </div>
+        
         <Button 
+          variant={progress === 1 ? "default" : "link"}
           size="sm"
-          variant="default" 
-          className="mt-4"
+          className="text-sm"
           onClick={onTerminate}
         >
-          Share Another File
+          {progress === 1 ? "Share Another File" : "Terminate"}
         </Button>
-      ) : (
-        <Button 
-          variant="link" 
-          className="text-sm hover:text-foreground mt-4"
-          onClick={onTerminate}
-        >
-          Terminate
-        </Button>
-      )}
+      </div>
     </div>
   );
 }
