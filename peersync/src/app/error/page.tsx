@@ -40,7 +40,7 @@ export default function ErrorPage() {
           <p className="text-lg text-muted-foreground">{description}</p>
           <Button 
             onClick={() => router.push('/')}
-            size="lg"
+            size="sm"
           >
             Return Home
           </Button>
