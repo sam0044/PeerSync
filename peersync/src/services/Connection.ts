@@ -53,7 +53,16 @@ export class Connection {
     }
 
     private createPeer(initiator: boolean, callbacks: ConnectionCallbacks) {
-        this.peer = new SimplePeer({ initiator });
+        const config = {
+            initiator,
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            }
+        }
+        this.peer = new SimplePeer(config);
 
         this.peer.on('signal', signal => {
             if (this.targetId) {
