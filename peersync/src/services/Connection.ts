@@ -1,6 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import SimplePeer from "simple-peer";
 import { ConnectionCallbacks, PeerMode } from "../types";
+import download from "downloadjs";
 
 export class Connection {
     private peer: SimplePeer.Instance | null = null;
@@ -81,7 +82,7 @@ export class Connection {
             const parsed = JSON.parse(data.toString());
             if (parsed.done) {
                 const blob = new Blob(this.receivedChunks, { type: parsed.type });
-                this.downloadFile(blob, parsed.name);
+                download(blob, parsed.name);
                 callbacks.onComplete();
                 this.receivedChunks = [];
             }
@@ -123,15 +124,6 @@ export class Connection {
         };
 
         sendChunk();
-    }
-
-    private downloadFile(blob: Blob, filename: string) {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        window.URL.revokeObjectURL(url);
     }
 
     disconnect() {
