@@ -12,6 +12,7 @@ export class Connection {
     private targetId: string | null = null;
     private receivedChunks: Array<ArrayBuffer> = [];
     private readonly CHUNK_SIZE = 16 * 1024;
+    private totalFileSize: number | null = null;
 
     constructor(roomId: string, mode: PeerMode) {
         this.roomId = roomId;
@@ -86,7 +87,7 @@ export class Connection {
         });
     }
 
-    private handleData(data: Uint8Array | ArrayBuffer | string, callbacks: ConnectionCallbacks) {
+    private handleData(data: Uint8Array | string, callbacks: ConnectionCallbacks) {
         try {
             const parsed = JSON.parse(data.toString());
             if (parsed.done) {
@@ -94,18 +95,26 @@ export class Connection {
                 download(blob, parsed.name);
                 callbacks.onComplete();
                 this.receivedChunks = [];
+            } else if (parsed.totalSize) {
+                this.totalFileSize = parsed.totalSize;
             }
         } catch {
             if (data instanceof Uint8Array) {
                 this.receivedChunks.push(data.buffer);
-            } else if (data instanceof ArrayBuffer) {
-                this.receivedChunks.push(data);
-            }
+                if (this.totalFileSize) {
+                    const receivedSize = this.receivedChunks.reduce((acc, chunk) => acc + chunk.byteLength, 0);
+                    callbacks.onProgress(receivedSize / this.totalFileSize);
+                }
+            } 
         }
     }
 
     async sendFile(file: File, onProgress: (progress: number) => void) {
         if (!this.isConnected || !this.peer) return;
+
+        this.peer.send(JSON.stringify({
+            totalSize: file.size
+        }));
 
         let offset = 0;
         const sendChunk = () => {

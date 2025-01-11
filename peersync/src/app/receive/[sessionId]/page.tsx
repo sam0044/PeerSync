@@ -16,7 +16,7 @@ export default function ReceivePage() {
     sessionId,
     mode: 'receiver'
   });
-
+  console.log(progress);
 
   return (
     <div className="min-h-screen flex flex-col bg-background transition-all duration-300 relative">
@@ -27,15 +27,17 @@ export default function ReceivePage() {
         <div className="w-full max-w-md mx-auto text-center">
           {!isConnected && !receivedFileData && <p>Connecting to peer...</p>}
           {isConnected && !receivedFileData && (
-            <div className="space-y-2">
+            <div className="space-y-4">
               <p>Waiting for file...</p>
               {progress > 0 && (
-                <>
-                  <Progress value={progress * 100} />
-                  <p className="text-sm text-center text-muted-foreground">
-                    {Math.round(progress * 100)}%
-                  </p>
-                </>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Progress value={progress * 100} className="flex-1" />
+                    <span className="text-sm text-muted-foreground w-12">
+                      {Math.round(progress * 100)}%
+                    </span>
+                  </div>
+                </div>
               )}
               </div>
           )}
