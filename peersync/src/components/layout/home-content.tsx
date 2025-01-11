@@ -7,8 +7,9 @@ import { ShareInfo } from "../file-share/share-info";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { usePeerConnection } from "@/hooks/usePeerConnection";
-import { Progress } from "../ui/progress";
+
 import { useToast } from "@/hooks/use-toast";
+import { TransferProgress } from "../file-share/transfer-progress";
 
 interface HomeContentProps {
   file: File | null;
@@ -76,9 +77,6 @@ export function HomeContent ({
         {file && isSharing && sessionId && (
           <ShareInfo 
             sessionId={sessionId} 
-            onTerminate={handleTerminate}
-            isConnected={isConnected}
-            progress={progress}
           />
         )}
         {!isSharing && (
@@ -102,8 +100,12 @@ export function HomeContent ({
                 </Button>
               </div>
             )}
-            {isSharing && isConnected && progress > 0 && progress < 1 && (
-              <Progress value={progress*100} />
+            {isSharing && (
+              <TransferProgress 
+                isConnected={isConnected}
+                progress={progress}
+                onTerminate={handleTerminate}
+              />
             )}
           </div>
         )}

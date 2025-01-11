@@ -1,22 +1,13 @@
 import QRCode from "react-qr-code";
 import { CopyButton } from "../ui/copy-button";
-import { Button } from "../ui/button";
 
 interface ShareInfoProps {
   sessionId: string;
-  onTerminate: () => void;
-  isConnected: boolean;
-  progress: number;
 }
 
-export function ShareInfo({ sessionId, onTerminate, isConnected, progress }: ShareInfoProps) {
+export function ShareInfo({ sessionId }: ShareInfoProps) {
   const shareUrl = `${window.location.origin}/receive/${sessionId}`;
-  const getStatusMessage = () => {
-    if (!isConnected) return 'Waiting for peer...';
-    if (progress === 0) return 'Connected - Ready to transfer';
-    if (progress === 1) return 'Transfer complete!';
-    return `Transferring: ${Math.round(progress * 100)}%`;
-  };
+
   return (
     <div className="text-center mb-4">
       <QRCode 
@@ -29,16 +20,6 @@ export function ShareInfo({ sessionId, onTerminate, isConnected, progress }: Sha
         <p className="text-sm text-muted-foreground break-all">{shareUrl}</p>
         <CopyButton value={shareUrl} className="shrink-0" />
       </div>
-      <p className="text-sm mt-2">
-        Status: {getStatusMessage()}
-      </p>
-      <Button 
-        variant="link" 
-        className="text-sm hover:text-foreground"
-        onClick={onTerminate}
-      >
-        Terminate
-      </Button>
     </div>
   );
 }
