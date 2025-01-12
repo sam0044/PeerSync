@@ -20,7 +20,12 @@ export default function ErrorPage() {
         return {
           title: "Invalid Session",
           description: "This sharing link is invalid. Please request a new one."
-        };
+        }; 
+      case 'connection-error':
+          return {
+              title: "Connection Error",
+              description: "The connection was lost. This could be due to network issues or because the transfer was cancelled. Please try again."
+          };
       default:
         return {
           title: "Error",
