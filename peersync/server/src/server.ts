@@ -1,5 +1,8 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { config } from 'dotenv';
+
+config();
 
 interface Room {
   id: string;
@@ -9,7 +12,7 @@ interface Room {
 const server = createServer();
 const io = new Server(server, {
   cors: {
-    origin: '*'
+    origin: process.env.CORS_ORIGIN
   }
 });
 
@@ -65,7 +68,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
