@@ -10,7 +10,7 @@ export class Connection {
     private mode: PeerMode;
     private roomId: string;
     private targetId: string | null = null;
-    private receivedChunks: ArrayBufferLike[] = [];
+    private receivedChunks: Uint8Array[] = [];
     private readonly CHUNK_SIZE = 16 * 1024;
     private totalFileSize: number | null = null;
 
@@ -135,7 +135,7 @@ export class Connection {
             }
         } catch {
             if (data instanceof Uint8Array) {
-                this.receivedChunks.push(data.buffer);
+                this.receivedChunks.push(data);
                 if (this.totalFileSize) {
                     const receivedSize = this.receivedChunks.reduce((acc, chunk) => acc + chunk.byteLength, 0);
                     callbacks.onProgress(receivedSize / this.totalFileSize);
