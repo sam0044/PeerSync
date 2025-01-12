@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getSession,deleteSession } from "../../../../../lib/session";
 
-export async function GET(request: Request, { params }: { params: { sessionId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { sessionId: string } }) {
     try{
-        const {sessionId} = await params;
+        const {sessionId} = params;
         const session = await getSession(sessionId);
         if (!session) {
             return NextResponse.json({ 
