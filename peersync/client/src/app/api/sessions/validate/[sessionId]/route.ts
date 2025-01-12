@@ -1,15 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getSession,deleteSession } from "../../../../../lib/session";
 
-type Props ={
-  params: {
-    sessionId: string;
-  }
-}
-
-export async function GET(request: NextRequest, { params }: Props) {
+export async function GET(request: NextRequest) {
     try{
-        const {sessionId} = await params;
+        const sessionId = request.nextUrl.pathname.split('/').pop();
+        if (!sessionId) {
+          return NextResponse.json({ valid: false, message: "Invalid session" }, { status: 404 });
+      }
         const session = await getSession(sessionId);
         if (!session) {
             return NextResponse.json({ 
@@ -19,7 +16,7 @@ export async function GET(request: NextRequest, { params }: Props) {
           }
       
           if (Date.now() > session.expiresAt) {
-            await deleteSession(params.sessionId);
+            await deleteSession(sessionId);
             return NextResponse.json({ 
               valid: false, 
               message: "Session expired" 

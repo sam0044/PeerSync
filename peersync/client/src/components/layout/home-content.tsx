@@ -89,10 +89,10 @@ export function HomeContent ({
             <FileCard file={file} />
             {!isSharing && (
               <div className="text-center flex justify-center gap-4">
-                <Button variant="secondary" size="lg" onClick={handleShare}>
+                <Button variant="outline" size="lg" onClick={handleShare}>
                   Share Now
                 </Button>
-                <Button size="lg" onClick={() => {
+                <Button variant="destructive" size="lg" onClick={() => {
                   setFile(null);
                   setSessionId(null);
                 }}>
