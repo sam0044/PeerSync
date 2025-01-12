@@ -1,9 +1,15 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getSession,deleteSession } from "../../../../../lib/session";
 
-export async function GET(request: NextRequest, { params }: { params: { sessionId: string } }) {
+type Props ={
+  params: {
+    sessionId: string;
+  }
+}
+
+export async function GET(request: NextRequest, { params }: Props) {
     try{
-        const {sessionId} = params;
+        const {sessionId} = await params;
         const session = await getSession(sessionId);
         if (!session) {
             return NextResponse.json({ 
