@@ -2,6 +2,7 @@ import type SimplePeer from 'simple-peer';
 
 // Basic shared types
 export type PeerMode = 'sender' | 'receiver';
+export type TransferStatus = 'completed'| 'connection-error';
 
 // For usePeerConnection hook
 export interface UsePeerConnectionProps {
@@ -21,8 +22,7 @@ export interface UsePeerConnectionReturn {
 export interface ConnectionCallbacks {
     onConnected: () => void;
     onProgress: (progress: number) => void;
-    onComplete: () => void;
-    onError: (error: Error) => void;
+    onStatus: (status: TransferStatus) => void;
 }
 
 export interface SignalData {

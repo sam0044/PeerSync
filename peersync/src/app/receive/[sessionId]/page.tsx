@@ -16,7 +16,6 @@ export default function ReceivePage() {
     sessionId,
     mode: 'receiver'
   });
-  console.log(progress);
 
   return (
     <div className="min-h-screen flex flex-col bg-background transition-all duration-300 relative">
