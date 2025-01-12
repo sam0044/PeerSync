@@ -10,7 +10,7 @@ export class Connection {
     private mode: PeerMode;
     private roomId: string;
     private targetId: string | null = null;
-    private receivedChunks: Array<ArrayBuffer> = [];
+    private receivedChunks: ArrayBufferLike[] = [];
     private readonly CHUNK_SIZE = 16 * 1024;
     private totalFileSize: number | null = null;
 
