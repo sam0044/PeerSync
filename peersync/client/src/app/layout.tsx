@@ -6,7 +6,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Easy File Share - Free Peer to Peer File Sharing',
+  title: 'PeerSync | Free Secure File Sharing',
   description: 'Share files instantly with end-to-end encryption. No signup required, completely free peer-to-peer file transfer.',
 };
 
