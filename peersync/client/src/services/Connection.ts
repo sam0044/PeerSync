@@ -25,7 +25,9 @@ export class Connection {
         onStatus: (status: TransferStatus) => void
     }) {
         // Connect socket
-        this.socket = io(process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL);
+        this.socket = io(process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL,{
+            transports: ['websocket']
+        });
         
         this.socket.on('connect', () => {
             this.socket?.emit('join-room', this.roomId);
