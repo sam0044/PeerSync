@@ -26,12 +26,11 @@ export class Connection {
     }) {
         // Connect socket
         this.socket = io(process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL,{
-            transports: ['websocket', 'polling'],
-            reconnectionAttempts: 5,
+            transports: ['websocket'],
+            reconnectionAttempts: 3,
             reconnectionDelay: 1000,
-            timeout: 20000,
+            timeout: 10000,
             forceNew: true,
-            path: '/socket.io/'
         });
         this.socket.on('connect_error', (error) => {
             console.error('Socket connection error:', error);
