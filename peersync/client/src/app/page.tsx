@@ -32,10 +32,6 @@ export default function Home() {
     >
       <input {...getInputProps()} />
       <Header />
-      <div className="bg-red-500 text-white text-center py-2 mt-16">
-        <h1 className="text-xl font-bold">Site Under Maintenance</h1>
-        <p>We are currently experiencing issues. We are working on it. Please check back later.</p>
-      </div>
       <HomeContent 
         file={file}
         onFileSelect={handleFileSelect}
