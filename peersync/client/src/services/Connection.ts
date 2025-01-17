@@ -28,9 +28,9 @@ export class Connection {
         this.socket = io(process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL,{
             transports: ['websocket'],
         });
-        this.socket.on('connect_error', (error) => {
-            console.error('Socket connection error:', error);
+        this.socket.on('connect_error', () => {
             callbacks.onStatus('connection-error');
+            this.deleteSession();
         });
         
         this.socket.on('connect', () => {
@@ -89,6 +89,7 @@ export class Connection {
         this.peer.on('error', () => {
             this.isConnected = false;
             callbacks.onStatus('connection-error');
+            this.deleteSession();
         });
     }
 
@@ -136,6 +137,7 @@ export class Connection {
                 download(blob, parsed.name);
                 callbacks.onStatus('completed');
                 this.receivedChunks = [];
+                this.deleteSession();
             } else if (parsed.totalSize) {
                 this.totalFileSize = parsed.totalSize;
             }
@@ -150,11 +152,23 @@ export class Connection {
         }
     }
 
+    private async deleteSession() {
+        if (this.mode !== 'sender') return;
+        try {
+            await fetch(`/api/sessions/delete/${this.roomId}`, {
+                method: 'DELETE',
+            });
+        } catch (error) {
+            console.error('Failed to delete session:', error);
+        }
+    }
+
     disconnect() {
         this.peer?.destroy();
         this.socket?.disconnect();
         this.isConnected = false;
         this.targetId = null;
         this.receivedChunks = [];
+        this.deleteSession();
     }
 }

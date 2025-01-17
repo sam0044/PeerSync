@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
         const sessionId = request.nextUrl.pathname.split('/').pop();
         if (!sessionId) {
           return NextResponse.json({ valid: false, message: "Invalid session" }, { status: 404 });
-      }
+        }
         const session = await getSession(sessionId);
         if (!session) {
             return NextResponse.json({ 

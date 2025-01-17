@@ -37,9 +37,6 @@ export function HomeContent ({
       const response = await fetch('/api/sessions/create', {
         method: 'POST',
       });
-      if(!response.ok){
-        throw new Error('Failed to create session');
-      }
       const {sessionId} = await response.json();
       setIsSharing(true);
       setSessionId(sessionId);
