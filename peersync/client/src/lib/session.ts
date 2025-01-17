@@ -27,12 +27,9 @@ export async function createSession(): Promise<string>{
 
 export async function getSession(sessionId: string): Promise<Session | null>{
     const session = await redis.get<Session>(`session:${sessionId}`);
-    console.log(session);
     return session
 }
 
 export async function deleteSession(sessionId: string): Promise<void>{
-    console.log('deleting session', sessionId);
-    const result = await redis.del(`session:${sessionId}`);
-    console.log(result);
+    await redis.del(`session:${sessionId}`);
 }
