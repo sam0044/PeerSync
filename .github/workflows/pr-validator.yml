@@ -17,7 +17,7 @@ jobs:
       - name: Check code formatting
         uses: creyD/prettier_action@v4.3
         with:
-          prettier_options: "--check ./client/**/*.{js,jsx,ts,tsx,css,scss,json,md} ./server/**/*.{ts,json,md}"
+          prettier_options: "--check ./peersync/client/**/*.{js,jsx,ts,tsx,css,scss,json,md} ./peersync/server/**/*.{ts,json,md}"
           dry: True
 
 
@@ -42,25 +42,25 @@ jobs:
                 cache: 'pnpm'
 
             - name: Install client dependencies
-              working-directory: ./client
+              working-directory: ./peersync/client
               run: pnpm install
             
             - name: Lint client
-              working-directory: ./client
+              working-directory: ./peersync/client
               run: pnpm lint
             
             - name: Build client
-              working-directory: ./client
+              working-directory: ./peersync/client
               run: pnpm build
             
             - name: Install server dependencies
-              working-directory: ./server
+              working-directory: ./peersync/server
               run: pnpm install
 
             - name: Lint server
-              working-directory: ./server
+              working-directory: ./peersync/server
               run: pnpm lint
 
             - name: Build server
-              working-directory: ./server
+              working-directory: ./peersync/server
               run: pnpm build
