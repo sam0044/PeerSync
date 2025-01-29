@@ -1,22 +1,22 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Share2, Shield, Zap } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Share2, Shield, Zap } from 'lucide-react';
 
 const features = [
   {
     icon: <Share2 className="h-6 w-6" />,
-    title: "Instant Sharing",
-    description: "Share files seamlessly with peers in real-time"
+    title: 'Instant Sharing',
+    description: 'Share files seamlessly with peers in real-time',
   },
   {
     icon: <Shield className="h-6 w-6" />,
-    title: "Secure Transfer",
-    description: "End-to-end encryption for your file transfers"
+    title: 'Secure Transfer',
+    description: 'End-to-end encryption for your file transfers',
   },
   {
     icon: <Zap className="h-6 w-6" />,
-    title: "Lightning Fast",
-    description: "Optimized for speed and reliability"
-  }
+    title: 'Lightning Fast',
+    description: 'Optimized for speed and reliability',
+  },
 ];
 
 export function Features() {

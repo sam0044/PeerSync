@@ -1,5 +1,5 @@
-import QRCode from "react-qr-code";
-import { CopyButton } from "../ui/copy-button";
+import QRCode from 'react-qr-code';
+import { CopyButton } from '../ui/copy-button';
 
 interface ShareInfoProps {
   sessionId: string;
@@ -10,7 +10,7 @@ export function ShareInfo({ sessionId }: ShareInfoProps) {
 
   return (
     <div className="text-center mb-4">
-      <QRCode 
+      <QRCode
         value={shareUrl}
         size={160}
         style={{ margin: '0 auto', marginBottom: '1rem' }}

@@ -8,7 +8,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'PeerSync | Free Secure File Sharing',
-  description: 'Share files instantly with end-to-end encryption. No signup required, completely free peer-to-peer file transfer.',
+  description:
+    'Share files instantly with end-to-end encryption. No signup required, completely free peer-to-peer file transfer.',
 };
 
 export default function RootLayout({

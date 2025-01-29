@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Hero } from "./hero";
-import { UploadZone } from "../file-upload/upload-zone";
-import { FileCard } from "../file-upload/file-card";
-import { ShareInfo } from "../file-share/share-info";
-import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
-import { usePeerConnection } from "../../hooks/usePeerConnection";
+import { Hero } from './hero';
+import { UploadZone } from '../file-upload/upload-zone';
+import { FileCard } from '../file-upload/file-card';
+import { ShareInfo } from '../file-share/share-info';
+import { useEffect, useState } from 'react';
+import { Button } from '../ui/button';
+import { usePeerConnection } from '../../hooks/usePeerConnection';
 
-import { useToast } from "../../hooks/use-toast";
-import { TransferProgress } from "../file-share/transfer-progress";
+import { useToast } from '../../hooks/use-toast';
+import { TransferProgress } from '../file-share/transfer-progress';
 
 interface HomeContentProps {
   file: File | null;
@@ -19,7 +19,7 @@ interface HomeContentProps {
   setSessionId: (sessionId: string | null) => void;
 }
 
-export function HomeContent ({
+export function HomeContent({
   file,
   onFileSelect,
   sessionId,
@@ -29,26 +29,25 @@ export function HomeContent ({
   const [isSharing, setIsSharing] = useState(false);
   const { isConnected, sendFile, disconnect, progress } = usePeerConnection({
     sessionId: sessionId,
-    mode: 'sender'
+    mode: 'sender',
   });
   const { toast } = useToast();
   const handleShare = async () => {
-    try{
+    try {
       const response = await fetch('/api/sessions/create', {
         method: 'POST',
       });
-      const {sessionId} = await response.json();
+      const { sessionId } = await response.json();
       setIsSharing(true);
       setSessionId(sessionId);
     } catch {
       toast({
-        variant: "destructive",
-        title: "Error creating session",
-        description: "Could not create sharing session. Please try again.",
+        variant: 'destructive',
+        title: 'Error creating session',
+        description: 'Could not create sharing session. Please try again.',
       });
       setIsSharing(false);
     }
-
   };
 
   const handleTerminate = () => {
@@ -69,18 +68,14 @@ export function HomeContent ({
   return (
     <main className="flex-1 container mx-auto px-4 pt-24 pb-16">
       <Hero mode="share" />
-      
+
       <section className="max-w-2xl mx-auto mb-16">
-        {file && isSharing && sessionId && (
-          <ShareInfo 
-            sessionId={sessionId} 
-          />
-        )}
+        {file && isSharing && sessionId && <ShareInfo sessionId={sessionId} />}
         {!isSharing && (
           <div className="mb-8">
             <UploadZone onFileSelect={onFileSelect} />
           </div>
-         )}
+        )}
         {file && (
           <div className="space-y-6">
             <FileCard file={file} />
@@ -89,16 +84,20 @@ export function HomeContent ({
                 <Button variant="outline" size="lg" onClick={handleShare}>
                   Share Now
                 </Button>
-                <Button variant="destructive" size="lg" onClick={() => {
-                  setFile(null);
-                  setSessionId(null);
-                }}>
+                <Button
+                  variant="destructive"
+                  size="lg"
+                  onClick={() => {
+                    setFile(null);
+                    setSessionId(null);
+                  }}
+                >
                   Cancel
                 </Button>
               </div>
             )}
             {isSharing && (
-              <TransferProgress 
+              <TransferProgress
                 isConnected={isConnected}
                 progress={progress}
                 onTerminate={handleTerminate}
@@ -109,4 +108,4 @@ export function HomeContent ({
       </section>
     </main>
   );
-};  
+}

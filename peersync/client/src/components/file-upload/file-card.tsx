@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 interface FileCardProps {
   file: File;
@@ -8,7 +8,7 @@ export function FileCard({ file }: FileCardProps) {
   const formatFileSize = (bytes: number) => {
     const mb = bytes / (1024 * 1024);
     const kb = bytes / 1024;
-    
+
     if (mb >= 1) {
       return `${mb.toFixed(2)} MB`;
     }
