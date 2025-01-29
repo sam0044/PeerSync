@@ -40,6 +40,10 @@ jobs:
               with:
                 node-version: ${{ matrix.node-version }}
                 cache: 'pnpm'
+            
+            - name: Install root dependencies
+              working-directory: ./peersync
+              run: pnpm install
 
             - name: Install client dependencies
               working-directory: ./peersync/client
