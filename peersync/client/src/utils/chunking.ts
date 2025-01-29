@@ -18,11 +18,14 @@ export function* getFileChunks(file: File) {
   }
 }
 
-export async function reconstructFile(chunks: Blob[], metadata: {
-  fileName: string;
-  fileType: string;
-  fileSize: number;
-}) {
+export async function reconstructFile(
+  chunks: Blob[],
+  metadata: {
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+  }
+) {
   const file = new File(chunks, metadata.fileName, {
     type: metadata.fileType,
   });

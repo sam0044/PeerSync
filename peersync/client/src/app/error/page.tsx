@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Header } from "../../components/layout/header";
-import { Button } from "../../components/ui/button";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { Header } from '../../components/layout/header';
+import { Button } from '../../components/ui/button';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 function ErrorContent() {
   const searchParams = useSearchParams();
@@ -14,23 +14,26 @@ function ErrorContent() {
     switch (error) {
       case 'expired-session':
         return {
-          title: "Session Expired",
-          description: "This sharing session has expired. Please request a new sharing link."
+          title: 'Session Expired',
+          description:
+            'This sharing session has expired. Please request a new sharing link.',
         };
       case 'invalid-session':
         return {
-          title: "Invalid Session",
-          description: "This sharing link is invalid. Please request a new one."
-        }; 
+          title: 'Invalid Session',
+          description:
+            'This sharing link is invalid. Please request a new one.',
+        };
       case 'connection-error':
         return {
-          title: "Connection Error",
-          description: "The connection was lost. This could be due to network issues or because the transfer was cancelled. Please try again."
+          title: 'Connection Error',
+          description:
+            'The connection was lost. This could be due to network issues or because the transfer was cancelled. Please try again.',
         };
       default:
         return {
-          title: "Error",
-          description: "Something went wrong. Please try again."
+          title: 'Error',
+          description: 'Something went wrong. Please try again.',
         };
     }
   };
@@ -41,10 +44,7 @@ function ErrorContent() {
     <div className="text-center space-y-4">
       <h1 className="text-4xl font-bold text-foreground">{title}</h1>
       <p className="text-lg text-muted-foreground">{description}</p>
-      <Button 
-        onClick={() => router.push('/')}
-        size="sm"
-      >
+      <Button onClick={() => router.push('/')} size="sm">
         Return Home
       </Button>
     </div>

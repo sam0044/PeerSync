@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Button } from "../ui/button";
-import { Card} from "../ui/card";
-import { File } from "lucide-react";
+import { Button } from '../ui/button';
+import { Card } from '../ui/card';
+import { File } from 'lucide-react';
 
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
 }
 
-export function UploadZone({ onFileSelect}: UploadZoneProps) {
+export function UploadZone({ onFileSelect }: UploadZoneProps) {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       onFileSelect(e.target.files[0]);
@@ -31,7 +31,7 @@ export function UploadZone({ onFileSelect}: UploadZoneProps) {
           />
           <Button
             size="sm"
-            onClick={() => document.getElementById("file-upload")?.click()}
+            onClick={() => document.getElementById('file-upload')?.click()}
           >
             Select File
           </Button>

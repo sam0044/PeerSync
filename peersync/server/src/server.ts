@@ -12,8 +12,8 @@ interface Room {
 const server = createServer();
 const io = new Server(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN
-  }
+    origin: process.env.CORS_ORIGIN,
+  },
 });
 
 // Track active rooms and their peers
@@ -25,20 +25,20 @@ io.on('connection', (socket) => {
   // Join room
   socket.on('join-room', (roomId: string) => {
     console.log(`Client ${socket.id} joining room ${roomId}`);
-    
+
     if (!rooms.has(roomId)) {
       rooms.set(roomId, { id: roomId, peers: new Set() });
     }
-    
+
     const room = rooms.get(roomId)!;
     room.peers.add(socket.id);
     socket.join(roomId);
 
     // Notify others in room
     socket.to(roomId).emit('peer-joined', socket.id);
-    
+
     // Send existing peers to new peer
-    const peersInRoom = Array.from(room.peers).filter(id => id !== socket.id);
+    const peersInRoom = Array.from(room.peers).filter((id) => id !== socket.id);
     socket.emit('existing-peers', peersInRoom);
   });
 
@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
     console.log(`Forwarding signal from ${socket.id} to ${targetId}`);
     io.to(targetId).emit('signal', {
       peerId: socket.id,
-      signal
+      signal,
     });
   });
 
@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
       if (room.peers.has(socket.id)) {
         room.peers.delete(socket.id);
         socket.to(roomId).emit('peer-left', socket.id);
-        
+
         if (room.peers.size === 0) {
           console.log(`Removing empty room ${roomId}`);
           rooms.delete(roomId);

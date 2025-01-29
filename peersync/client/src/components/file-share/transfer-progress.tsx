@@ -1,5 +1,5 @@
-import { Button } from "../ui/button";
-import { Progress } from "../ui/progress";
+import { Button } from '../ui/button';
+import { Progress } from '../ui/progress';
 
 interface TransferProgressProps {
   isConnected: boolean;
@@ -7,7 +7,11 @@ interface TransferProgressProps {
   onTerminate: () => void;
 }
 
-export function TransferProgress({ isConnected, progress, onTerminate }: TransferProgressProps) {
+export function TransferProgress({
+  isConnected,
+  progress,
+  onTerminate,
+}: TransferProgressProps) {
   const getStatusMessage = () => {
     if (!isConnected) return 'Waiting for peer...';
     if (progress === 0) return 'Connected - Ready to transfer';
@@ -24,16 +28,14 @@ export function TransferProgress({ isConnected, progress, onTerminate }: Transfe
         </span>
       </div>
       <div className="flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
-          {getStatusMessage()}
-        </p>
-        <Button 
+        <p className="text-sm text-muted-foreground">{getStatusMessage()}</p>
+        <Button
           variant="link"
           size="sm"
           className="text-sm"
           onClick={onTerminate}
         >
-          {progress === 1 ? "Share Another File" : "Terminate"}
+          {progress === 1 ? 'Share Another File' : 'Terminate'}
         </Button>
       </div>
     </div>
